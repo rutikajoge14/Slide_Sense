@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Sense - Intelligence Detection & Alert System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #c0392b;
+            --info: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .hero-section {
+            padding: 100px 0 80px;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-section p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 15px 0;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--info);
+        }
+
+        .sensor-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+
+        .sensor-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .status-safe { background: var(--success); color: white; }
+        .status-warning { background: var(--warning); color: white; }
+        .status-danger { background: var(--danger); color: white; }
+
+        .alert-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .emergency-contact {
+            background: white;
+            border-left: 4px solid var(--danger);
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+
+        .login-container {
+            max-width: 450px;
+            margin: 80px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .page-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+
+        .risk-indicator {
+            height: 30px;
+            border-radius: 15px;
+            background: linear-gradient(to right, var(--success), var(--warning), var(--danger));
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .risk-pointer {
+            position: absolute;
+            width: 4px;
+            height: 40px;
+            background: black;
+            top: -5px;
+            transition: left 0.5s;
+        }
+
+        .map-container {
+            height: 400px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#" onclick="showPage('home')">
+                <i class="fas fa-mountain text-danger"></i> Slide Sense
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('home')">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('dashboard')">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('alerts')">Real-Time Alerts</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('emergency')">Emergency</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('preparedness')">Preparedness</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('location')">Location</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('login')">
+                        <i class="fas fa-user"></i> Login
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page">
+        <div class="hero-section">
+            <div class="container">
+                <h1><i class="fas fa-shield-alt"></i> Slide Sense</h1>
+                <p>Intelligence Detection & Alert System for Landslide Prevention</p>
+                <button class="btn btn-light btn-lg me-3" onclick="showPage('dashboard')">
+                    <i class="fas fa-chart-line"></i> View Dashboard
+                </button>
+                <button class="btn btn-outline-light btn-lg" onclick="showPage('emergency')">
+                    <i class="fas fa-phone"></i> Emergency Contacts
+                </button>
+            </div>
+        </div>
+
+        <div class="container pb-5">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-satellite-dish"></i></div>
+                        <h3>Real-Time Monitoring</h3>
+                        <p>7 advanced sensors continuously monitor soil moisture, temperature, humidity, movement, gas levels, and rainfall.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-bell"></i></div>
+                        <h3>Instant Alerts</h3>
+                        <p>Receive immediate email notifications when dangerous conditions are detected, giving you time to evacuate.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-cloud"></i></div>
+                        <h3>Cloud Analytics</h3>
+                        <p>All sensor data is stored and analyzed on ThingSpeak cloud platform with historical trend analysis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-map-marked-alt"></i></div>
+                        <h3>Location Tracking</h3>
+                        <p>GPS-enabled location tracking helps authorities respond quickly to affected areas.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-book-medical"></i></div>
+                        <h3>Preparedness Guide</h3>
+                        <p>Comprehensive resources on what to do before, during, and after a landslide event.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard-page" class="page" style="display:none;">
+        <div class="container mt-5 pt-5">
+            <div class="page-content">
+                <h2 class="mb-4"><i class="fas fa-tachometer-alt"></i> Sensor Dashboard</h2>
+                
+                <div class="alert-card" id="dashboard-alert">
+                    <h4><i class="fas fa-exclamation-triangle"></i> System Status: MONITORING</h4>
+                    <p id="status-message">All sensors operational. No immediate threats detected.</p>
+                    <div class="risk-indicator">
+                        <div class="risk-pointer" id="risk-pointer" style="left: 20%;"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <small>LOW RISK</small>
+                        <small>MODERATE</small>
+                        <small>HIGH RISK</small>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="sensor-card">
+                            <h5><i class="fas fa-tint"></i> Soil Moisture</h5>
+                            <div class="sensor-value" id="soil-moisture">--</div>
+                            <small class="text-muted">Percentage</small>
+                            <span class="status-badge status-safe" id="soil-status">Normal</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="sensor-card">
+                            <h5><i class="fas fa-thermometer-half"></i> Temperature</h5>
+                            <div class="sensor-value" id="temperature">--</div>
+                            <small class="text-muted">°C</small>
+                            <span class="status-badge status-safe" id="temp-status">Normal</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="sensor-card">
+                            <h5><i class="fas fa-water"></i> Humidity</h5>
+                            <div class="sensor-value" id="humidity">--</div>
+                            <small class="text-muted">%</small>
+                            <span class="status-badge status-safe" id="humidity-status">Normal</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="sensor-card">
+                            <h5><i class="fas fa-arrows-alt"></i> Accelerometer</h5>
+                            <div class="sensor-value" id="accelerometer">--</div>
+                            <small class="text-muted">X: <span id="accel-x">0</span> Y: <span id="accel-y">0</span> Z: <span id="accel-z">0</span></small>
+                            <span class="status-badge status-safe" id="accel-status">Stable</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="sensor-card">
+                            <h5><i class="fas fa-smog"></i> Gas Sensor</h5>
+                            <div class="sensor-value" id="gas">--</div>
+                            <small class="text-muted">PPM</small>
+                            <span class="status-badge status-safe" id="gas-status">Safe</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="sensor-card">
+                            <h5><i class="fas fa-wave-square"></i> Vibration</h5>
+                            <div class="sensor-value" id="vibration">--</div>
+                            <small class="text-muted">Level</small>
+                            <span class="status-badge status-safe" id="vibration-status">Normal</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="sensor-card">
+                            <h5><i class="fas fa-cloud-rain"></i> Rain Sensor</h5>
+                            <div class="sensor-value" id="rain">--</div>
+                            <small class="text-muted">Status</small>
+                            <span class="status-badge status-safe" id="rain-status">Dry</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="sensor-card">
+                            <h5><i class="fas fa-ruler-vertical"></i> Distance</h5>
+                            <div class="sensor-value" id="distance">--</div>
+                            <small class="text-muted">cm (Ultrasonic)</small>
+                            <span class="status-badge status-safe" id="distance-status">Normal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container mt-4">
+                    <h4>ThingSpeak Live Data</h4>
+                    <p class="text-muted">Replace CHANNEL_ID with your ThingSpeak channel ID</p>
+                    <iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/YOUR_CHANNEL_ID/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line"></iframe>
+                    <iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/YOUR_CHANNEL_ID/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line"></iframe>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary" onclick="fetchSensorData()">
+                        <i class="fas fa-sync"></i> Refresh Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real-Time Alerts Page -->
+    <div id="alerts-page" class="page" style="display:none;">
+        <div class="container mt-5 pt-5">
+            <div class="page-content">
+                <h2 class="mb-4"><i class="fas fa-bell"></i> Real-Time Alerts</h2>
+                
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle"></i> Alert System Active</h5>
+                    <p>This system monitors all sensors 24/7 and sends automatic alerts when dangerous conditions are detected.</p>
+                </div>
+
+                <div id="alerts-container">
+                    <div class="alert-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5><i class="fas fa-check-circle"></i> System Online</h5>
+                                <p class="mb-1">All sensors are operational and reporting normally</p>
+                                <small>Last updated: <span id="last-update">--</span></small>
+                            </div>
+                            <span class="badge bg-success">ACTIVE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h4>Alert History</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Type</th>
+                                    <th>Severity</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="alert-history">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">No alerts in history</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contacts Page -->
+    <div id="emergency-page" class="page" style="display:none;">
+        <div class="container mt-5 pt-5">
+            <div class="page-content">
+                <h2 class="mb-4"><i class="fas fa-phone-alt"></i> Emergency Contacts</h2>
+                
+                <div class="alert alert-danger">
+                    <h5><i class="fas fa-exclamation-triangle"></i> In Case of Emergency</h5>
+                    <p>If you detect signs of an imminent landslide, evacuate immediately and contact these authorities.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="emergency-contact">
+                            <h5><i class="fas fa-ambulance"></i> Emergency Services</h5>
+                            <h3 class="text-danger">112</h3>
+                            <p>National Emergency Number (24/7)</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="emergency-contact">
+                            <h5><i class="fas fa-fire-extinguisher"></i> Fire Department</h5>
+                            <h3 class="text-danger">101</h3>
+                            <p>Fire & Rescue Services</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="emergency-contact">
+                            <h5><i class="fas fa-shield-alt"></i> Police</h5>
+                            <h3 class="text-danger">100</h3>
+                            <p>Police Emergency Services</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="emergency-contact">
+                            <h5><i class="fas fa-hospital"></i> Disaster Management</h5>
+                            <h3 class="text-danger">108</h3>
+                            <p>National Disaster Response Force</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h4>Local Authorities</h4>
+                    <div class="emergency-contact">
+                        <h5><i class="fas fa-building"></i> District Collector Office</h5>
+                        <p><strong>Phone:</strong> +91-XXXX-XXXXXX</p>
+                        <p><strong>Email:</strong> collector@district.gov.in</p>
+                    </div>
+                    <div class="emergency-contact">
+                        <h5><i class="fas fa-hard-hat"></i> Geological Survey Department</h5>
+                        <p><strong>Phone:</strong> +91-XXXX-XXXXXX</p>
+                        <p><strong>Email:</strong> geology@state.gov.in</p>
+                    </div>
+                    <div class="emergency-contact">
+                        <h5><i class="fas fa-hospital-alt"></i> Nearest Hospital</h5>
+                        <p><strong>Phone:</strong> +91-XXXX-XXXXXX</p>
+                        <p><strong>Address:</strong> [Your Hospital Address]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preparedness Page -->
+    <div id="preparedness-page" class="page" style="display:none;">
+        <div class="container mt-5 pt-5">
+            <div class="page-content">
+                <h2 class="mb-4"><i class="fas fa-book-medical"></i> Disaster Preparedness</h2>
+                
+                <div class="accordion" id="preparednessAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#before">
+                                <i class="fas fa-clipboard-list me-2"></i> Before a Landslide
+                            </button>
+                        </h2>
+                        <div id="before" class="accordion-collapse collapse show" data-bs-parent="#preparednessAccordion">
+                            <div class="accordion-body">
+                                <h5>Preparation Steps:</h5>
+                                <ul>
+                                    <li><strong>Emergency Kit:</strong> Prepare a kit with water, food, first aid, flashlight, radio, and batteries</li>
+                                    <li><strong>Evacuation Plan:</strong> Know your evacuation routes and have a family meeting point</li>
+                                    <li><strong>Stay Informed:</strong> Monitor weather forecasts and register for alert systems</li>
+                                    <li><strong>Property Protection:</strong> Build retaining walls, plant ground cover on slopes</li>
+                                    <li><strong>Drainage:</strong> Ensure proper drainage around your property</li>
+                                    <li><strong>Insurance:</strong> Check if your insurance covers landslide damage</li>
+                                    <li><strong>Warning Signs:</strong> Learn to recognize landslide warning signs</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#during">
+                                <i class="fas fa-running me-2"></i> During a Landslide
+                            </button>
+                        </h2>
+                        <div id="during" class="accordion-collapse collapse" data-bs-parent="#preparednessAccordion">
+                            <div class="accordion-body">
+                                <h5>Immediate Actions:</h5>
+                                <ul>
+                                    <li><strong>Alert Others:</strong> Warn neighbors if possible</li>
+                                    <li><strong>Evacuate:</strong> Move away from the path of the landslide immediately</li>
+                                    <li><strong>Go Uphill:</strong> Move to higher ground perpendicular to the slide path</li>
+                                    <li><strong>Avoid Rivers:</strong> Stay away from river valleys during heavy rainfall</li>
+                                    <li><strong>If Indoors:</strong> Curl into a tight ball and protect your head</li>
+                                    <li><strong>Stay Alert:</strong> Watch for flooding which often accompanies landslides</li>
+                                    <li><strong>Listen:</strong> Unusual sounds might indicate moving debris</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#after">
+                                <i class="fas fa-first-aid me-2"></i> After a Landslide
+                            </button>
+                        </h2>
+                        <div id="after" class="accordion-collapse collapse" data-bs-parent="#preparednessAccordion">
+                            <div class="accordion-body">
+                                <h5>Recovery Steps:</h5>
+                                <ul>
+                                    <li><strong>Stay Away:</strong> Keep away from the slide area as it may slide again</li>
+                                    <li><strong>Check for Injuries:</strong> Provide first aid if trained</li>
+                                    <li><strong>Report Hazards:</strong> Report broken utilities to authorities</li>
+                                    <li><strong>Replant:</strong> Plant ground cover to protect slopes from erosion</li>
+                                    <li><strong>Seek Advice:</strong> Consult geotechnical expert before returning home</li>
+                                    <li><strong>Watch for Changes:</strong> Monitor for new cracks, tilting, or ground movement</li>
+                                    <li><strong>Document Damage:</strong> Take photos for insurance claims</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#signs">
+                                <i class="fas fa-exclamation-circle me-2"></i> Warning Signs
+                            </button>
+                        </h2>
+                        <div id="signs" class="accordion-collapse collapse" data-bs-parent="#preparednessAccordion">
+                            <div class="accordion-body">
+                                <h5>Recognize These Signs:</h5>
+                                <ul>
+                                    <li>Changes in landscape patterns</li>
+                                    <li>Springs, seeps, or saturated ground in areas that are typically dry</li>
+                                    <li>New cracks in plaster, tile, brick, or foundations</li>
+                                    <li>Sunken or down-dropped road beds</li>
+                                    <li>Tilting trees, telephone poles, or fences</li>
+                                    <li>Broken water lines or underground utilities</li>
+                                    <li>Bulging ground at the base of slopes</li>
+                                    <li>Water breaking through ground surface</li>
+                                    <li>Unusual sounds like trees cracking or boulders knocking together</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info mt-4">
+                    <h5><i class="fas fa-download"></i> Download Resources</h5>
+                    <p>Download our comprehensive landslide safety guide for offline reference.</p>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-file-pdf"></i> Download PDF Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Page -->
+    <div id="location-page" class="page" style="display:none;">
+        <div class="container mt-5 pt-5">
+            <div class="page-content">
+                <h2 class="mb-4"><i class="fas fa-map-marker-alt"></i> Real-Time Location</h2>
+                
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-satellite"></i> GPS Tracking Active</h5>
+                    <p>This location is transmitted to authorities in case of emergency alerts.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="map-container">
+                            <div class="text-center">
+                                <i class="fas fa-map-marked-alt fa-5x text-secondary mb-3"></i>
+                                <p class="text-muted">Map integration placeholder</p>
+                                <p class="small">Integrate with Google Maps API or Leaflet.js</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="sensor-card">
+                            <h5><i class="fas fa-crosshairs"></i> Current Coordinates</h5>
+                            <p><strong>Latitude:</strong> <span id="latitude">--</span></p>
+                            <p><strong>Longitude:</strong> <span id="longitude">--</span></p>
+                            <p><strong>Accuracy:</strong> <span id="accuracy">--</span>m</p>
+                            <button class="btn btn-primary btn-sm w-100" onclick="getLocation()">
+                                <i class="fas fa-location-arrow"></i> Get My Location
+                            </button>
+                        </div>
+                        <div class="sensor-card mt-3">
+                            <h5><i class="fas fa-broadcast-tower"></i> Device Info</h5>
+                            <p><strong>Device ID:</strong> RPI-PICO-001</p>
+                            <p><strong>Status:</strong> <span class="badge bg-success">Online</span></p>
+                            <p><strong>Last Seen:</strong> <span id="device-last-seen">--</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="page" style="display:none;">
+        <div class="login-container">
+            <div class="text-center mb-4">
+                <i class="fas fa-mountain text-danger fa-3x mb-3"></i>
+                <h2>Slide Sense Login</h2>
+                <p class="text-muted">Sign in to receive alert notifications</p>
+            </div>
+            
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" class="form-control" id="login-email" required placeholder="your@email.com">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" class="form-control" id="login-password" required placeholder="Enter password">
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remember-me">
+                    <label class="form-check-label" for="remember-me">Remember me</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-3">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+            
+            <div class="text-center">
+                <a href="#" class="text-decoration-none">Forgot password?</a>
+                <hr>
+                <p class="mb-0">Don't have an account? <a href="#" onclick="showPage('register')">Register here</a></p>
+            </div>
+
+            <div class="alert alert-success mt-3" id="login-success" style="display:none;">
+                <i class="fas fa-check-circle"></i> Login successful! You will receive alerts at your email.
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Page -->
+    <div id="register-page" class="page" style="display:none;">
+        <div class="login-container">
+            <div class="text-center mb-4">
+                <i class="fas fa-user-plus text-primary fa-3x mb-3"></i>
+                <h2>Create Account</h2>
+                <p class="text-muted">Register to receive landslide alerts</p>
+            </div>
+            
+            <form id="register-form" onsubmit="handleRegister(event)">
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" class="form-control" id="register-name" required placeholder="John Doe">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" class="form-control" id="register-email" required placeholder="your@email.com">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" class="form-control" id="register-phone" required placeholder="+91 XXXXX XXXXX">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-map-marker-alt"></i> Location</label>
+                    <input type="text" class="form-control" id="register-location" required placeholder="Your area/district">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" class="form-control" id="register-password" required placeholder="Create password">
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="terms" required>
+                    <label class="form-check-label" for="terms">I agree to receive emergency alerts</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-3">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+            </form>
+            
+            <div class="text-center">
+                <p class="mb-0">Already have an account? <a href="#" onclick="showPage('login')">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Configuration - Replace with your actual values
+        const CONFIG = {
+            THINGSPEAK_CHANNEL_ID: '3100704',
+            THINGSPEAK_READ_API_KEY: 'G0WEYRWOLP7LAG8E',
+            EMAIL_SERVICE_URL: 'YOUR_BACKEND_URL/send-alert', // You'll need to set up a backend
+            UPDATE_INTERVAL: 15000 // Update every 15 seconds
+        };
+
+        // User session management
+        let currentUser = null;
+        let alertHistory = [];
+        let sensorData = {
+            soilMoisture: 0,
+            temperature: 0,
+            humidity: 0,
+            accelX: 0,
+            accelY: 0,
+            accelZ: 0,
+            gas: 0,
+            vibration: 0,
+            rain: 0,
+            distance: 0
+        };
+
+        // Page navigation
+        function showPage(pageName) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.style.display = 'none');
+            
+            const targetPage = document.getElementById(pageName + '-page');
+            if (targetPage) {
+                targetPage.style.display = 'block';
+                window.scrollTo(0, 0);
+            }
+
+            // Start sensor updates if dashboard is shown
+            if (pageName === 'dashboard') {
+                fetchSensorData();
+            }
+        }
+
+        // Fetch sensor data from ThingSpeak
+        async function fetchSensorData() {
+            try {
+                const url = `https://api.thingspeak.com/channels/${CONFIG.THINGSPEAK_CHANNEL_ID}/feeds.json?api_key=${CONFIG.THINGSPEAK_READ_API_KEY}&results=1`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.feeds && data.feeds.length > 0) {
+                    const latest = data.feeds[0];
+                    
+                    // Update sensor data (adjust field numbers based on your ThingSpeak setup)
+                    sensorData.soilMoisture = parseFloat(latest.field1) || 0;
+                    sensorData.temperature = parseFloat(latest.field2) || 0;
+                    sensorData.humidity = parseFloat(latest.field3) || 0;
+                    sensorData.accelX = parseFloat(latest.field4) || 0;
+                    sensorData.accelY = parseFloat(latest.field5) || 0;
+                    sensorData.accelZ = parseFloat(latest.field6) || 0;
+                    sensorData.gas = parseFloat(latest.field7) || 0;
+                    sensorData.vibration = parseFloat(latest.field8) || 0;
+                    
+                    updateDashboard();
+                    analyzeRisk();
+                }
+            } catch (error) {
+                console.error('Error fetching sensor data:', error);
+                // Use simulated data for demo
+                simulateSensorData();
+            }
+        }
+
+        // Simulate sensor data for demonstration
+        function simulateSensorData() {
+            sensorData.soilMoisture = Math.random() * 100;
+            sensorData.temperature = 20 + Math.random() * 15;
+            sensorData.humidity = 40 + Math.random() * 40;
+            sensorData.accelX = (Math.random() - 0.5) * 2;
+            sensorData.accelY = (Math.random() - 0.5) * 2;
+            sensorData.accelZ = 9.8 + (Math.random() - 0.5) * 0.5;
+            sensorData.gas = Math.random() * 500;
+            sensorData.vibration = Math.random() * 10;
+            sensorData.rain = Math.random() > 0.7 ? 1 : 0;
+            sensorData.distance = 50 + Math.random() * 100;
+            
+            updateDashboard();
+            analyzeRisk();
+        }
+
+        // Update dashboard display
+        function updateDashboard() {
+            // Soil Moisture
+            document.getElementById('soil-moisture').textContent = sensorData.soilMoisture.toFixed(1) + '%';
+            updateStatus('soil-status', sensorData.soilMoisture, 70, 85);
+            
+            // Temperature
+            document.getElementById('temperature').textContent = sensorData.temperature.toFixed(1) + '°C';
+            updateStatus('temp-status', sensorData.temperature, 30, 35);
+            
+            // Humidity
+            document.getElementById('humidity').textContent = sensorData.humidity.toFixed(1) + '%';
+            updateStatus('humidity-status', sensorData.humidity, 70, 85);
+            
+            // Accelerometer
+            document.getElementById('accel-x').textContent = sensorData.accelX.toFixed(2);
+            document.getElementById('accel-y').textContent = sensorData.accelY.toFixed(2);
+            document.getElementById('accel-z').textContent = sensorData.accelZ.toFixed(2);
+            const accelMagnitude = Math.sqrt(
+                sensorData.accelX ** 2 + 
+                sensorData.accelY ** 2 + 
+                sensorData.accelZ ** 2
+            );
+            document.getElementById('accelerometer').textContent = accelMagnitude.toFixed(2);
+            updateStatus('accel-status', Math.abs(accelMagnitude - 9.8), 1, 2);
+            
+            // Gas
+            document.getElementById('gas').textContent = sensorData.gas.toFixed(0);
+            updateStatus('gas-status', sensorData.gas, 300, 400);
+            
+            // Vibration
+            document.getElementById('vibration').textContent = sensorData.vibration.toFixed(1);
+            updateStatus('vibration-status', sensorData.vibration, 5, 7);
+            
+            // Rain
+            document.getElementById('rain').textContent = sensorData.rain ? 'Detected' : 'Dry';
+            document.getElementById('rain-status').textContent = sensorData.rain ? 'Rain' : 'Dry';
+            document.getElementById('rain-status').className = sensorData.rain ? 
+                'status-badge status-warning' : 'status-badge status-safe';
+            
+            // Distance
+            document.getElementById('distance').textContent = sensorData.distance.toFixed(1) + ' cm';
+            updateStatus('distance-status', 100 - sensorData.distance, 30, 50);
+            
+            // Update timestamp
+            const now = new Date();
+            document.getElementById('last-update').textContent = now.toLocaleTimeString();
+            document.getElementById('device-last-seen').textContent = now.toLocaleString();
+        }
+
+        // Update status badge
+        function updateStatus(elementId, value, warningThreshold, dangerThreshold) {
+            const element = document.getElementById(elementId);
+            if (value > dangerThreshold) {
+                element.textContent = 'Critical';
+                element.className = 'status-badge status-danger';
+            } else if (value > warningThreshold) {
+                element.textContent = 'Warning';
+                element.className = 'status-badge status-warning';
+            } else {
+                element.textContent = 'Normal';
+                element.className = 'status-badge status-safe';
+            }
+        }
+
+        // Analyze overall risk level
+        function analyzeRisk() {
+            let riskScore = 0;
+            let riskFactors = [];
+            
+            // Check each parameter
+            if (sensorData.soilMoisture > 85) {
+                riskScore += 30;
+                riskFactors.push('High soil moisture');
+            } else if (sensorData.soilMoisture > 70) {
+                riskScore += 15;
+            }
+            
+            if (sensorData.rain) {
+                riskScore += 20;
+                riskFactors.push('Rainfall detected');
+            }
+            
+            const accelDeviation = Math.abs(Math.sqrt(
+                sensorData.accelX ** 2 + 
+                sensorData.accelY ** 2 + 
+                sensorData.accelZ ** 2
+            ) - 9.8);
+            
+            if (accelDeviation > 2) {
+                riskScore += 25;
+                riskFactors.push('Ground movement detected');
+            } else if (accelDeviation > 1) {
+                riskScore += 10;
+            }
+            
+            if (sensorData.vibration > 7) {
+                riskScore += 20;
+                riskFactors.push('High vibration levels');
+            } else if (sensorData.vibration > 5) {
+                riskScore += 10;
+            }
+            
+            if (100 - sensorData.distance > 50) {
+                riskScore += 15;
+                riskFactors.push('Slope deformation');
+            }
+            
+            // Update risk indicator
+            const riskPointer = document.getElementById('risk-pointer');
+            riskPointer.style.left = Math.min(riskScore, 100) + '%';
+            
+            // Update alert message
+            const statusMsg = document.getElementById('status-message');
+            const dashboardAlert = document.getElementById('dashboard-alert');
+            
+            if (riskScore > 70) {
+                statusMsg.innerHTML = `<strong>⚠️ HIGH RISK DETECTED!</strong><br>Factors: ${riskFactors.join(', ')}`;
+                dashboardAlert.style.background = 'linear-gradient(135deg, #c0392b 0%, #e74c3c 100%)';
+                
+                // Send alert if user is logged in
+                if (currentUser) {
+                    sendAlert('HIGH', riskFactors);
+                }
+            } else if (riskScore > 40) {
+                statusMsg.innerHTML = `<strong>⚠️ MODERATE RISK</strong><br>Factors: ${riskFactors.join(', ') || 'Monitoring conditions'}`;
+                dashboardAlert.style.background = 'linear-gradient(135deg, #f39c12 0%, #f5576c 100%)';
+            } else {
+                statusMsg.textContent = 'All sensors operational. No immediate threats detected.';
+                dashboardAlert.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+            }
+        }
+
+        // Send alert email
+        async function sendAlert(severity, factors) {
+            const alert = {
+                timestamp: new Date().toISOString(),
+                severity: severity,
+                factors: factors,
+                email: currentUser,
+                location: 'Monitoring Station 001'
+            };
+            
+            // Add to alert history
+            alertHistory.unshift(alert);
+            updateAlertHistory();
+            
+            // In a real implementation, send to backend
+            console.log('Alert sent:', alert);
+            
+            // Show notification
+            showNotification(`${severity} RISK ALERT`, `Alert sent to ${currentUser}`);
+        }
+
+        // Update alert history table
+        function updateAlertHistory() {
+            const tbody = document.getElementById('alert-history');
+            
+            if (alertHistory.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No alerts in history</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = alertHistory.slice(0, 10).map(alert => `
+                <tr>
+                    <td>${new Date(alert.timestamp).toLocaleString()}</td>
+                    <td>Landslide Risk</td>
+                    <td><span class="badge bg-${alert.severity === 'HIGH' ? 'danger' : 'warning'}">${alert.severity}</span></td>
+                    <td>${alert.factors.join(', ')}</td>
+                    <td><span class="badge bg-success">Sent</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // In production, validate with backend
+            currentUser = email;
+            document.getElementById('login-success').style.display = 'block';
+            
+            setTimeout(() => {
+                showPage('dashboard');
+            }, 1500);
+        }
+
+        // Handle registration
+        function handleRegister(event) {
+            event.preventDefault();
+            const email = document.getElementById('register-email').value;
+            
+            // In production, send to backend
+            currentUser = email;
+            alert('Registration successful! You will receive alerts at ' + email);
+            showPage('login');
+        }
+
+        // Get user location
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        document.getElementById('latitude').textContent = position.coords.latitude.toFixed(6);
+                        document.getElementById('longitude').textContent = position.coords.longitude.toFixed(6);
+                        document.getElementById('accuracy').textContent = position.coords.accuracy.toFixed(0);
+                    },
+                    (error) => {
+                        alert('Error getting location: ' + error.message);
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+
+        // Show notification
+        function showNotification(title, message) {
+            if (Notification.permission === 'granted') {
+                new Notification(title, { body: message, icon: '/favicon.ico' });
+            }
+        }
+
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        // Auto-update sensor data
+        setInterval(() => {
+            const currentPage = Array.from(document.querySelectorAll('.page'))
+                .find(page => page.style.display !== 'none');
+            
+            if (currentPage && currentPage.id === 'dashboard-page') {
+                fetchSensorData();
+            }
+        }, CONFIG.UPDATE_INTERVAL);
+
+        // Initialize
+        window.onload = function() {
+            showPage('home');
+            // Try to get location on load
+            if (navigator.geolocation) {
+                getLocation();
+            }
+        };
+    </script>
+</body>
+</html>

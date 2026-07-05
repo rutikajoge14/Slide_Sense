@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sensor Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f3f3;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .sensor {
+            background: white;
+            padding: 20px;
+            margin: 10px auto;
+            border-radius: 8px;
+            max-width: 400px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .sensor-title {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .value {
+            color: #333;
+            font-size: 1.5em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Raspberry Pi Pico W Sensor Dashboard</h1>
+
+    <div class="sensor">
+        <div class="sensor-title">Temperature (°C)</div>
+        <div class="value" id="temp">--</div>
+    </div>
+
+    <div class="sensor">
+        <div class="sensor-title">Humidity (%)</div>
+        <div class="value" id="humidity">--</div>
+    </div>
+
+    <div class="sensor">
+        <div class="sensor-title">Soil Moisture</div>
+        <div class="value" id="soil">--</div>
+    </div>
+
+    <div class="sensor">
+        <div class="sensor-title">Gas Level</div>
+        <div class="value" id="gas">--</div>
+    </div>
+
+    <div class="sensor">
+        <div class="sensor-title">☔ Rain Level</div>
+        <div class="value" id="rain">--</div>
+    </div>
+
+    <div class="sensor">
+        <div class="sensor-title">💥 Vibration</div>
+        <div class="value" id="vibration">--</div>
+    </div>
+
+    <div class="sensor">
+        <div class="sensor-title">Distance (cm)</div>
+        <div class="value" id="distance">--</div>
+    </div>
+
+    <div class="sensor">
+        <div class="sensor-title">Accelerometer X</div>
+        <div class="value" id="accel_x">--</div>
+    </div>
+
+    <script>
+        const channelID = '3100704'; // Replace with your ThingSpeak channel ID
+        const apiKey = 'G0WEYRWOLP7LAG8E';  // Optional if public channel
+        const url = `https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${apiKey}`;
+
+        async function fetchData() {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                document.getElementById('temp').innerText = data.field1 || '--';
+                document.getElementById('humidity').innerText = data.field2 || '--';
+                document.getElementById('soil').innerText = data.field3 || '--';
+                document.getElementById('gas').innerText = data.field4 || '--';
+                document.getElementById('rain').innerText = data.field5 || '--';
+                document.getElementById('vibration').innerText = data.field6 == '1' ? 'Detected' : 'None';
+                document.getElementById('distance').innerText = data.field7 || '--';
+                document.getElementById('accel_x').innerText = data.field8 || '--';
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Initial fetch
+        fetchData();
+
+        // Refresh every 15 seconds (ThingSpeak limit)
+        setInterval(fetchData, 15000);
+    </script>
+</body>
+</html>
